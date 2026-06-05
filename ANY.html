@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>Text to QR</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+
+body{
+    margin:0;
+    height:100vh;
+    background:#ffffff;
+    font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    padding-right:40px;
+}
+
+.main-box{
+    width:320px;
+    padding:20px;
+    border:2px solid #ddd;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+    text-align:center;
+    background:#fff;
+}
+
+.title{
+    font-size:16px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+input{
+    padding:10px;
+    width:100%;
+    border:2px solid #000;
+    border-radius:6px;
+    margin-bottom:15px;
+    box-sizing:border-box;
+}
+
+input:focus{
+    outline:none;
+    box-shadow:none;
+    border:2px solid #000;
+}
+
+.qr-container{
+    position:relative;
+    display:none;
+}
+
+#qrcode{
+    padding:10px;
+    background:#fff;
+    border:1px solid #000;
+    display:inline-block;
+}
+
+.qr-logo{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:55px;
+    height:55px;
+    background:#fff;
+    padding:5px;
+    border-radius:8px;
+    display:none;
+}
+
+.qr-text{
+    margin-top:8px;
+    font-size:12px;
+    font-weight:bold;
+    background:#353835;
+    color:#00FF00;
+    word-break:break-all;
+    padding:2px;
+}
+
+.datetime-box{
+    margin-top:12px;
+    font-size:13px;
+    font-weight:bold;
+    color:#333;
+    line-height:1.8;
+}
+
+#mpnImage{
+    display:none;
+    width:220px;
+    margin:10px auto 0 auto;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.copyright{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    text-align:right;
+    font-size:11px;
+    color:#BLUE;       
+    padding:6px 20px;
+    border-top:1px solid #ccc;
+    background:#fff;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="main-box">
+
+<div class="title">🌸 TEXT TO QR 🌸</div>
+
+<input type="text"
+       id="text"
+       autofocus
+       placeholder="Type any text..."
+       oninput="generateQR()">
+
+<div class="qr-container" id="qrContainer">
+    <div id="qrcode"></div>
+    <img src="adesh1.png" id="logo" class="qr-logo">
+</div>
+
+<div class="qr-text" id="bottomText"></div>
+
+<div class="datetime-box" id="currentDateTime"></div>
+
+<div id="partInfo" class="datetime-box" style="display:none;"></div>
+
+<img id="mpnImage" src="">
+
+</div>
+
+<footer class="copyright">
+© 2026 @Adesh / DIXON ELECTRO APPLIANCES PRIVATE LIMITED. All Rights Reserved.
+</footer>
+
+<script>
+
+const partMap = {
+
+"3TG03376AAAA":{
+    partCode:"3NOSLD0FTOP1RG01",
+    description:"Shield -F MPP-RGW-TOP-01-S_F FOR 5G32-A",
+    images:["3TG03376AAAA_1.png","3TG03376AAAA_2.png","3TG03376AAAA_3.png"]
+},
+
+"3TG03378AAAA":{
+    partCode:"3NOSLD0F0MPPTP01",
+    description:"Shield -F MPP-RGW-TOP-02-S_F FOR 5G32-A",
+    images:["3TG03378AAAA_1.png","3TG03378AAAA_2.png","3TG03378AAAA_3.png"]
+},
+
+"3TG03380AAAA":{
+    partCode:"3NOSLD0FTOP33S01",
+    description:"Shield -F MPP-RGW-TOP-03-S_F FOR 5G32-A",
+    images:["3TG03380AAAA_1.png","3TG03380AAAA_2.png","3TG03380AAAA_3.png"]
+},
+
+"3TG03382AAAA":{
+    partCode:"3NOSLD0FTOP4TP01",
+    description:"Shield -F MPP-RGW-TOP-04-S_F FOR 5G32-A",
+    images:["3TG03382AAAA_1.png","3TG03382AAAA_2.png","3TG03382AAAA_3.png"]
+},
+
+"3TG03386AAAA":{
+    partCode:"3NOSLD0FBOT66S01",
+    description:"Shield -F MPP-RGW-BOT-06-S_F FOR 5G32-A",
+    images:["3TG03386AAAA_1.png","3TG03386AAAA_2.png","3TG03386AAAA_3.png"]
+},
+
+"65-430-000468A0Z":{
+    partCode:"3ZYHSKFRAME30X20I",
+    description:"SHIELDING FRAME Mtl 30.02x20.94x3.5mm.AOT5222ZY",
+    images:["65-430-000468A0Z_1.png","65-430-000468A0Z_2.png","65-430-000468A0Z_3.png"]
+},
+
+"65-430-000299A0Z":{
+    partCode:"3ZYSLDG2741GX2X2I",
+    description:"SHEET METAL_SHIELDING,FRAME,2741GX2X2-AOT5222ZY",
+    images:["65-430-000299A0Z_1.png","65-430-000299A0Z_2.png","65-430-000299A0Z_3.png"]
+},
+
+"65-430-000321A0Z":{
+    partCode:"3ZYSLDFRMPX5311RI",
+    description:"SHIELDING FRAME,ROHS,SMD,X5311-R0.AOT5222ZY",
+    images:["65-430-000321A0Z_1.png","65-430-000321A0Z_2.png","65-430-000321A0Z_3.png"]
+},
+
+"65-430-000469A0Z":{
+    partCode:"3ZYHSKFRAME38X32I",
+    description:"SHIELDING FRAME Metl 37.9x32.3x3.75mm.AOT5222ZY",
+    images:["65-430-000469A0Z_1.png","65-430-000469A0Z_2.png","65-430-000469A0Z_3.png"]
+},
+
+"65-430-000467A0Z":{
+    partCode:"3ZYHSKFRAME44X36I",
+    description:"SHIELDING FRAME Metal 44.30x36.3x3mm.AOT5222ZY",
+    images:["65-430-000467A0Z_1.png","65-430-000467A0Z_2.png","65-430-000467A0Z_3.png"]
+},
+
+"65-430-000323A0Z":{
+    partCode:"3ZYSLD2492BX4X8UI",
+    description:"SHEET METAL_SHIELDING FRAME,ROHS,SMD-AOT5222ZY",
+    images:["65-430-000323A0Z_1.png","65-430-000323A0Z_2.png","65-430-000323A0Z_3.png"]
+},
+
+"65-430-000381A0Z":{
+    partCode:"3ZYSLDFRAME55432",
+    description:"SHIELDING FRAME,SMD,55.68x43.6x2.75mm-AAP4221ZY",
+    images:["65-430-000381A0Z_1.png","65-430-000381A0Z_2.png","65-430-000381A0Z_3.png"]
+},
+
+"65-430-000341A0Z":{
+    partCode:"3ZYSLDFRAMESPTE5I",
+    description:"SHIELDING FRAME,55.68x43.6x2.75mm.AAP4221ZY",
+    images:["65-430-000341A0Z_1.png","65-430-000341A0Z_2.png","65-430-000341A0Z_3.png"]
+},
+
+"65-430-000382A0Z":{
+    partCode:"3ZYSLDFRAME49293",
+    description:"SHIELDING FRAME,49.3x29x3.03mm-AAP4221ZY",
+    images:["65-430-000382A0Z_1.png","65-430-000382A0Z_2.png","65-430-000382A0Z_3.png"]
+},
+
+"65-430-000333A0Z":{
+    partCode:"3ZYSLDFRAMESMD01",
+    description:"SHIELDING FRAME SHEETM.49.3x29x3.03mm.AAP4221ZY",
+    images:["65-430-000333A0Z_1.png","65-430-000333A0Z_2.png","65-430-000333A0Z_3.png"]
+},
+
+"65-430-000384A0Z":{
+    partCode:"3ZYSLDFRAME27262",
+    description:"SHIELDING FRAME,SMD,27.8x26.74x2.75mm-AAP4221ZY",
+    images:["65-430-000384A0Z_1.png","65-430-000384A0Z_2.png","65-430-000384A0Z_3.png"]
+},
+
+"65-430-000342A0Z":{
+    partCode:"3ZYSLDFRAMESMD02",
+    description:"SHIELDING FRAME,27.8x26.74x2.75mm.AAP4221ZY",
+    images:["65-430-000342A0Z_1.png","65-430-000342A0Z_2.png","65-430-000342A0Z_3.png"]
+},
+
+"65-430-000383A0Z":{
+    partCode:"3ZYSLDFRAME77172",
+    description:"SHIELDING FRAME,22.17x20.77x2.75mm-AAP4221ZY",
+    images:["65-430-000383A0Z_1.png","65-430-000383A0Z_2.png","65-430-000383A0Z_3.png"]
+},
+
+"65-430-000340A0Z":{
+    partCode:"3ZYSLDFRAMESMD03",
+    description:"SHIELDING FRAME,22.17x20.77x2.75mm.AAP4221ZY",
+    images:["65-430-000340A0Z_1.png","65-430-000340A0Z_2.png","65-430-000340A0Z_3.png"]
+},
+
+"5050000055541000":{
+    partCode:"3NOSLDFRAMAX3000I",
+    description:"Shield Frame,Ax3000_CPU_SHIELD,G-1426G",
+    images:["5050000055541000_1.png","5050000055541000_2.png","5050000055541000_3.png"]
+},
+
+"5050000055571000":{
+    partCode:"3NOSLDSFRAMEWIFII",
+    description:"Shield Frame,Ax3000_WIFI_FRAME,G-1426G",
+    images:["5050000055571000_1.png","5050000055571000_2.png","5050000055571000_3.png"]
+},
+
+"5050000060741000":{
+    partCode:"3NOSLDBOSASFRAMEI",
+    description:"BOSA_SHIELD_FRAME,MJ0000008494A-G1426G",
+    images:["5050000060741000_1.png","5050000060741000_2.png","5050000060741000_3.png"]
+},
+
+"5050000052001000":{
+    partCode:"3NOSLDBE28MMFR01I",
+    description:"Shield Frame,28.97mmx26.04mm-Beacon3.2",
+    images:["5050000052001000_1.png","5050000052001000_2.png","5050000052001000_3.png"]
+},
+
+"5050000052011000":{
+    partCode:"3NOSLDBE27MMFR01I",
+    description:"Shield Frame,27.78mmx20.65mm-Beacon3.2",
+    images:["5050000052011000_1.png","5050000052011000_2.png","5050000052011000_3.png"]
+},
+
+"5050000052021000":{
+    partCode:"3NOSLDBE55MMFR01I",
+    description:"Shield Frame,55.72mmx50.84mm-Beacon3.2",
+    images:["5050000052021000_1.png","5050000052021000_2.png","5050000052021000_3.png"]
+},
+
+"5050000052641000":{
+    partCode:"3NOSLDBEFRAM2601I",
+    description:"Shield Frame,44.56x44.14x1.6mm-Beacon3.2",
+    images:["5050000052641000_1.png","5050000052641000_2.png","5050000052641000_3.png"]
+},
+
+"2000100012223425":{
+    partCode:"3NOPCB4LAYERWIFII",
+    description:"WiFi PCB,REV030-100,4Layers-Beacon3.2",
+    images:["2000100012223425_1.png","2000100012223425_2.png","2000100012223425_3.png"]
+},
+
+"45-040-000353Z-BATR":{
+    partCode:"3ZYPCBPX5311R1BAI",
+    description:"PCB PX5311-R1,OSP(GP) PCB1.6,4L,BA.AOT5222ZY",
+    images:["45-040-000353Z-BATR_1.jpeg","45-040-000353Z-BATR_2.jpeg","45-040-000353Z-BATR_3.png"]
+},
+
+"2002100009233425":{
+    partCode:"3NOPCB1426OSPF4I",
+    description:"PON PCB,Bharti AX3000,OSP,FR4,G-1426G",
+    images:["2002100009233425_1.png","2002100009233425_2.png","2002100009233425_3.png"]
+},
+
+"QM0021100899":{
+    partCode:"3NOPCBX2Y24LPBT4I",
+    description:"PCB QDW508-EPPBT4(X2Y2 V1.3,4L,142x100mm-5G32-A",
+    images:["QM0021100899_1.png","QM0021100899_2.png","QM0021100899_3.png"]
+},
+
+"45-020-000089Z-A0TR":{
+    partCode:"3ZYPCB2LAYERGPT1I",
+    description:"PCB.EX3310-T0.OSP A0-AB,PCB1.6.2LAYER.ZY",
+    images:["45-020-000089Z-A0TR_1.png","45-020-000089Z-A0TR_2.png","45-020-000089Z-A0TR_3.png"]
+},
+
+"45-040-000264Z-A0TR":{
+    partCode:"3ZYPCB4LAYERGPT1I",
+    description:"PCB.EX3310-T0.OSP A0-AC.PCB1.6.4LAYER.ZY",
+    images:["45-040-000264Z-A0TR_1.png","45-040-000264Z-A0TR_2.png","45-040-000264Z-A0TR_3.png"]
+}
+
+};
+
+let imageTimer;
+let currentImageIndex = 0;
+
+function generateQR(){
+
+    let text = document.getElementById("text").value.trim();
+    let qr = document.getElementById("qrcode");
+    let logo = document.getElementById("logo");
+    let qrBox = document.getElementById("qrContainer");
+    let mpnImg = document.getElementById("mpnImage");
+    let dateTime = document.getElementById("currentDateTime");
+    let partInfo = document.getElementById("partInfo");
+
+    qr.innerHTML = "";
+
+    clearInterval(imageTimer);
+
+    if(text === ""){
+
+        qrBox.style.display = "none";
+        logo.style.display = "none";
+        mpnImg.style.display = "none";
+        partInfo.style.display = "none";
+        dateTime.style.display = "block";
+
+        document.getElementById("bottomText").innerText = "";
+        return;
+    }
+
+    qrBox.style.display = "inline-block";
+
+    new QRCode(qr,{
+        text:text,
+        width:200,
+        height:200,
+        colorDark:"#000000",
+        colorLight:"#ffffff",
+        correctLevel:QRCode.CorrectLevel.H
+    });
+
+    logo.style.display = "block";
+
+    document.getElementById("bottomText").innerText =
+        "MPN → " + text;
+
+    if(partMap[text]){
+
+partInfo.innerHTML =
+    "<div style='text-align:center'>" +
+    "<b>DESCRIPTION → </b><br>" +
+    partMap[text].description +
+    "</div>";
+        partInfo.style.display = "block";
+
+        dateTime.style.display = "none";
+
+        currentImageIndex = 0;
+
+        mpnImg.src = partMap[text].images[currentImageIndex];
+        mpnImg.style.display = "block";
+
+        imageTimer = setInterval(function(){
+
+            currentImageIndex++;
+
+            if(currentImageIndex >= partMap[text].images.length){
+                currentImageIndex = 0;
+            }
+
+            mpnImg.src = partMap[text].images[currentImageIndex];
+
+        },20000);
+
+    }else{
+
+        partInfo.style.display = "none";
+        mpnImg.style.display = "none";
+        dateTime.style.display = "block";
+    }
+}
+
+function updateDateTime(){
+
+    const now = new Date();
+
+    const days = [
+        "SUNDAY",
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY"
+    ];
+
+    const day = days[now.getDay()];
+
+    const date = now.toLocaleDateString("en-GB");
+
+    const time = now.toLocaleTimeString("en-US",{
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hour12:true
+    });
+
+    document.getElementById("currentDateTime").innerHTML =
+        "📅 " + day + "<br>" +
+        "📆 " + date + "<br>" +
+        "⏰ " + time;
+}
+
+updateDateTime();
+setInterval(updateDateTime,1000);
+window.onload = function(){
+    document.getElementById("text").focus();
+};
+
+</script>
+
+</body>
+</html>
