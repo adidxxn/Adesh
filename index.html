@@ -1,3 +1,90 @@
+\\#SingleInstance Force
+SetKeyDelay, 75
+SetTitleMatchMode, 2
+
+paused := false
+count := 0
+
+F9::
+    ; RM Quality window lock
+    If !WinActive("RM Quality")
+    {
+        MsgBox, 48, Warning, RM Quality window active nahi hai.`nPlease RM Quality screen open karo.
+        Return
+    }
+
+    ClipWait, 2
+    data := Clipboard
+    rows := StrSplit(data, "`n")
+
+    count := 0
+    Sleep, 75
+
+    for index, row in rows
+    {
+        if (paused)
+            Continue
+
+        line := Trim(row,"`r`n`t ")
+        if (line = "")
+            Continue
+
+        cols := StrSplit(line, A_Tab)
+        count++
+
+        ; ===== A COLUMN =====
+        Clipboard := cols[1]
+        Send, ^v
+        Sleep, 200
+        Send, {Enter}
+
+        ; ===== B COLUMN =====
+        if (cols.MaxIndex() >= 2)
+        {
+            Clipboard := cols[2]
+            Send, ^v
+            Sleep, 200
+            Send, {Enter}{Enter}{Enter}{Enter}
+            Sleep, 200
+        }
+
+        ToolTip, Rows Completed: %count%
+        Sleep, 200
+    }
+
+    ToolTip
+
+    ; 1 minute baad MsgBox auto close hoga
+    SetTimer, CloseMsgBox, -60000
+
+    MsgBox, 64, @Adesh, Total Rows Processed: %count%
+Return
+
+
+F10::
+    paused := !paused
+
+    if (paused)
+        ToolTip, PAUSED
+    else
+        ToolTip
+
+    SetTimer, RemoveToolTip, -1000
+Return
+
+
+RemoveToolTip:
+    ToolTip
+Return
+
+
+CloseMsgBox:
+    WinClose, @Adesh
+Return
+
+
+Esc::
+ExitApp
 <!DOCTYPE html>
 
 <html lang="en">
