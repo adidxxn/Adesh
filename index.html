@@ -238,7 +238,36 @@ Return
 
 Esc::
 ExitApp
-*/
+
+mpn 5g32-a
+
+=IFERROR(MID(A2,FIND("B",MID(A2,FIND(";",A2,FIND(";",A2)+1)+1,100))+FIND(";",A2,FIND(";",A2)+1)+1,12),"")
+qty
+=IF(A2="","",VALUE(RIGHT(MID(A2,FIND(";",A2,FIND(";",A2)+1)+1,FIND(";",A2,FIND(";",A2,FIND(";",A2)+1)+1)-FIND(";",A2,FIND(";",A2)+1)-1),5)))
+date code -20250908
+=IFERROR(MID(A2,FIND("E",A2)+1,8),"")
+date code 2025-09-08
+=IFERROR(TEXT(DATE(LEFT(G2,4),MID(G2,5,2),RIGHT(G2,2)),"yyyy-mm-dd"),"")
+
+mpn zyxel
+=IFERROR(LEFT(A2,FIND(",",A2)-1),"")
+date code 2540
+=IF(A2="","",IFERROR(MID(A2,FIND(",",A2,FIND(",",A2,FIND(",",A2)+1)+1)+1,FIND(",",A2,FIND(",",A2,FIND(",",A2,FIND(",",A2)+1)+1)+1)-FIND(",",A2,FIND(",",A2,FIND(",",A2)+1)+1)-1),""))
+date code by v lokkup =IF(F2="","",IFERROR(VLOOKUP(VALUE(F2),G:H,2,FALSE),""))
+qty
+=IF(A2="","",IFERROR(LEFT(MID(A2,FIND(",",A2)+1,LEN(A2)),FIND(",",MID(A2,FIND(",",A2)+1,LEN(A2)))-1),""))
+date code 260203
+=IFERROR(MID(A2,FIND(",",A2,FIND(",",A2,FIND(",",A2)+1)+1)+1,FIND(",",A2,FIND(",",A2,FIND(",",A2,FIND(",",A2)+1)+1)+1)-FIND(",",A2,FIND(",",A2,FIND(",",A2)+1)+1)-1),"")
+date code 2026-02-03
+=IFERROR(TEXT(DATE(2000+LEFT(E2,2),MID(E2,3,2),RIGHT(E2,2)),"yyyy-mm-dd"),"")
+
+beacon & 1426
+mpn 
+=TRIM(MID(SUBSTITUTE(A2,"&",REPT(" ",100)),101,100))
+date code 2531
+=IF(A2="","",IFERROR(MID(A2,FIND("#",A2)+1,FIND("#",A2,FIND("#",A2)+1)-FIND("#",A2)-1),RIGHT(A2,LEN(A2)-FIND("#",A2))))
+date code 2025-07-30
+=IF(F2="","",IFERROR(VLOOKUP(VALUE(F2),G:H,2,0),"")) by lookup*/
 
 
 const partMap = {
