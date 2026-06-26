@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AHK Script</title>
+<title>@Adesh</title>
 
 <style>
 body{
@@ -39,22 +39,22 @@ pre{
 #SingleInstance Force
 #NoEnv
 #Persistent
+#MaxThreadsPerHotkey 2
 
 SendMode Input
 SetBatchLines, -1
-SetKeyDelay, 0
-SetWinDelay, 0
-SetControlDelay, 0
-SetMouseDelay, 0
+SetKeyDelay, -1, -1
+SetWinDelay, -1
+SetControlDelay, -1
+SetMouseDelay, -1
 SetTitleMatchMode, 2
+Process, Priority,, High
+ListLines Off
 
 paused := false
 count := 0
 startRow := 0
-
-;====================================
-; F8 = Excel Selection Copy + Save Row
-;====================================
+    
 F8::
 try
 {
@@ -72,13 +72,11 @@ try
 }
 catch
 {
-    MsgBox, 48, Error, Excel open nahi hai ya data select nahi hai.
+    MsgBox, 48, Error, Excel open nahi 
 }
 Return
 
-;====================================
-; F9 = Start Processing
-;====================================
+
 F9::
 
 if !WinActive("RM Quality")
@@ -89,7 +87,7 @@ if !WinActive("RM Quality")
 
 if (startRow = 0)
 {
-    MsgBox, 48, Warning, Pehle Excel me data select karke F8 dabao.
+    MsgBox, 48, Warning, Pehle Excel
     Return
 }
 
@@ -97,7 +95,7 @@ data := Clipboard
 
 if (data = "")
 {
-    MsgBox, 48, Error, Clipboard Empty Hai.
+    MsgBox, 48, Error, Clipboard Empty 
     Return
 }
 
@@ -107,7 +105,7 @@ try
 }
 catch
 {
-    MsgBox, 48, Error, Excel Open Nahi Hai.
+    MsgBox, 48, Error, Excel Open Nahi
     Return
 }
 
@@ -129,10 +127,10 @@ for index, row in rows
     if (cols.MaxIndex() >= 1 && Trim(cols[1]) != "")
 {
     SendInput % cols[1]
-    Sleep, 80
+    Sleep, 10
     SendInput {Enter}
 
-    Sleep, 500
+    Sleep, 120
 
 ControlGetText, errorA, WindowsForms10.STATIC.app.0.13965fa_r7_ad15, RM Quality
 
@@ -161,26 +159,26 @@ if (Trim(errorA) != "")
         cellD.Font.Color := 192
     }
 }
-    Sleep, 60
+    Sleep, 10
 }
 
 if (cols.MaxIndex() >= 2 && Trim(cols[2]) != "")
 {
     SendInput % cols[2]
-    Sleep, 60
+    Sleep, 10
 
     SendInput {Enter}
-    Sleep, 60
+    Sleep, 10
 
     SendInput {Enter}
-    Sleep, 20
+    Sleep, 5
 
     SendInput {Enter}
-    Sleep, 30
+    Sleep, 5
 
     SendInput {Enter}
 
-    Sleep, 500
+    Sleep, 120
 
 ControlGetText, errorB, WindowsForms10.STATIC.app.0.13965fa_r7_ad15, RM Quality
 
@@ -209,7 +207,7 @@ if (Trim(errorB) != "")
         cellE.Font.Color := 192
     }
 }
-    Sleep, 300
+    Sleep, 10
 }
 
     ;=====================
@@ -234,15 +232,11 @@ try
     statusCell.Font.Color := 32768
     statusCell.Font.Bold := True
 
-    ;-------------------------
-    ; D & E Column Auto Width
-    ;-------------------------
     xl.ActiveSheet.Columns("C").AutoFit
     xl.ActiveSheet.Columns("D").AutoFit
     xl.ActiveSheet.Columns("E").AutoFit
 
     
-    ; Auto Row Height
     xl.ActiveSheet.Rows(rowNum).AutoFit
 
     ; Scroll Down
@@ -262,9 +256,6 @@ MsgBox, 64, @Adesh, Total Rows Processed: %count%
 
 Return
 
-;====================================
-; F10 = Pause / Resume
-;====================================
 F10::
 
 paused := !paused
@@ -278,12 +269,10 @@ SetTimer, RemoveToolTip, -1000
 
 Return
 
-;====================================
 RemoveToolTip:
 ToolTip
 Return
 
-;====================================
 Esc::
 ExitApp
 </pre>
