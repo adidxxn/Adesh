@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>@Adesh</title>
+
+<style>
+body{
+    background:#1e1e1e;
+    color:#fff;
+    font-family:Consolas, monospace;
+    margin:20px;
+}
+
+button{
+    background:#28a745;
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    cursor:pointer;
+    border-radius:5px;
+    font-size:16px;
+}
+
+pre{
+    background:#111;
+    border:1px solid #444;
+    padding:15px;
+    overflow:auto;
+    white-space:pre;
+}
+</style>
+</head>
+<body>
+
+<button onclick="copyCode()">📋 Copy Code</button>
+
+<pre id="code">
+#SingleInstance Force
+#NoEnv
+#Persistent
+#MaxThreadsPerHotkey 2
+
+SendMode Input
+SetBatchLines, -1
+SetKeyDelay, -1, -1
+SetWinDelay, -1
+SetControlDelay, -1
+SetMouseDelay, -1
+SetTitleMatchMode, 2
+Process, Priority,, High
+ListLines Off
+
+paused := false
+count := 0
+startRow := 0
+CheckError(col)
+{
+    global xl, startRow, count
+
+    if !WinExist("ahk_class #32770")
+        return
+
+    ControlGetText, ErrMsg, Static2, ahk_class #32770
+
+    if (Trim(ErrMsg) = "")
+        ErrMsg := "Unknown Error"
+
+    cell := xl.ActiveSheet.Cells(startRow + count, col)
+
+    cell.Value := ErrMsg
+    cell.WrapText := False
+    cell.Font.Bold := True
+    cell.Interior.Color := 13551615
+    cell.Font.Color := 192
+
+    ; Sirf ek baar AutoFit
+    xl.ActiveSheet.Columns(col).AutoFit
+
+    ; Popup OK
+    ControlClick, Button1, ahk_class #32770
+    Sleep,100
+}
+
+;====================================
+; F8 = Excel Selection Copy + Save Row
+;====================================
+F8::
+try
+{
+    xl := ComObjActive("Excel.Application")
+
+    startRow := xl.Selection.Row
+
+    Clipboard := ""
+    xl.Selection.Copy()
+
+    ClipWait, 1
+
+    ToolTip, Data Copied Successfully`nStart Row: %startRow%
+    SetTimer, RemoveToolTip, -1500
+}
+catch
+{
+    MsgBox, 48, Error, Excel open nahi hai ya data select nahi hai.
+}
+Return
+
+;====================================
+; F9 = Start Processing
+;====================================
+F9::
+
+if !WinActive("RM Label Printing")
+{
+    MsgBox, 48, Warning, RM LABEL PRINTING Window Active Karo.
+    Return
+}
+
+if (startRow = 0)
+{
+    MsgBox, 48, Warning, Pehle Excel me data select karke F8 dabao.
+    Return
+}
+
+data := Clipboard
+
+if (data = "")
+{
+    MsgBox, 48, Error, Clipboard Empty Hai.
+    Return
+}
+
+try
+{
+    xl := ComObjActive("Excel.Application")
+}
+catch
+{
+    MsgBox, 48, Error, Excel Open Nahi Hai.
+    Return
+}
+
+rows := StrSplit(data, "`n")
+count := 0
+
+for index, row in rows
+{
+    while (paused)
+        Sleep, 100
+
+    line := Trim(row, "`r`n`t ")
+
+    if (line = "")
+        Continue
+
+    cols := StrSplit(line, A_Tab)
+
+;======================
+; COLUMN A
+;======================
+if (cols.MaxIndex() >= 1 && Trim(cols[1]) != "")
+{
+    SendInput % cols[1]
+    Sleep,10
+    SendInput {Enter}
+    Sleep,300
+
+    CheckError(4)
+}
+if (cols.MaxIndex() >= 2 && Trim(cols[2]) != "")
+{
+    SendInput % cols[2]
+    Sleep,10
+    SendInput {Enter}
+    Sleep,300
+
+    CheckError(5)
+}
+if (cols.MaxIndex() >= 3 && Trim(cols[3]) != "")
+{
+    SendInput % cols[3]
+    Sleep,10
+
+    SendInput {Enter}
+    Sleep,10
+    SendInput {Enter}
+
+    Sleep,300
+
+    CheckError(6)
+
+    Sleep,50
+}
+
+count++
+}   ; for loop end
+
+try
+{
+    xl.ActiveSheet.Columns("D:F").AutoFit
+}
+catch
+{
+}
+
+
+ToolTip
+
+MsgBox, 64, @Adesh, Total Rows Processed: %count%
+
+Return
+
+;====================================
+; F10 = Pause / Resume
+;====================================
+F10::
+
+paused := !paused
+
+if (paused)
+    ToolTip, PAUSED
+else
+    ToolTip, RESUMED
+
+SetTimer, RemoveToolTip, -1000
+
+Return
+
+;====================================
+RemoveToolTip:
+ToolTip
+Return
+
+;====================================
+Esc::
+ExitApp
+</pre>
+
+<script>
+function copyCode() {
+    const text = document.getElementById("code").innerText;
+
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Code Copied Successfully!");
+    });
+}
+</script>
+
+</body>
+</html>
