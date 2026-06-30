@@ -34,6 +34,7 @@ button{
 
 <pre id="code">
     
+    
 #SingleInstance Force
 #NoEnv
 #Persistent
@@ -89,14 +90,14 @@ startRow  := sel.Row
 totalRows := sel.Rows.Count
 
 ;===============================
-; SET FONT SIZE = 8 (A:E)
+; SET FONT SIZE = 10 (A:E)
 ;===============================
 try
 {
     xl.ScreenUpdating := False
 
     sht := xl.ActiveSheet
-    sht.Columns("A:E").Font.Size := 8
+    sht.Columns("A:E").Font.Size := 10
 
     xl.ScreenUpdating := True
 }
@@ -409,6 +410,7 @@ Return
 
 Esc::
 ExitApp
+
 
 </pre>
 
