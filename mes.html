@@ -35,6 +35,8 @@ button{
 <pre id="code">
     
     
+    
+    
 #SingleInstance Force
 #NoEnv
 #Persistent
@@ -88,16 +90,12 @@ startRow  := sel.Row
 totalRows := sel.Rows.Count
 startRow  := sel.Row
 totalRows := sel.Rows.Count
-
-;===============================
-; SET FONT SIZE = 10 (A:E)
-;===============================
 try
 {
     xl.ScreenUpdating := False
 
     sht := xl.ActiveSheet
-    sht.Columns("A:E").Font.Size := 10
+    sht.Columns("A:E").Font.Size := 8
 
     xl.ScreenUpdating := True
 }
@@ -140,13 +138,9 @@ MPN :
 %col2%
 )
 
-;===============================
-; BARCODE PROCESS
-;===============================
-
 if (col1 != "")
 {
-    SendInput %col1%
+    SendInput {Raw}%col1%
     Sleep,20
 
     SendInput {Enter}
@@ -181,10 +175,6 @@ if (col1 != "")
         }
     }
 }
-
-;===============================
-; MPN PROCESS
-;===============================
 
 if (col2 != "")
 {
@@ -234,10 +224,6 @@ if (col2 != "")
     }
 }
 
-;===============================
-; STATUS
-;===============================
-
 FormatTime,currentTime,,dd-MM-yyyy HH:mm:ss
 
 cellC := xl.ActiveSheet.Cells(excelRow,3)
@@ -252,17 +238,15 @@ try
 {
     sht := xl.ActiveSheet
 
-    sht.Columns("C:E").AutoFit
+    sht.Columns("C").AutoFit
+    sht.Columns("D").ColumnWidth := 35    
+    sht.Columns("E").AutoFit
+
     sht.Rows(excelRow).AutoFit
 }
 catch
 {
 }
-
-
-;===============================
-; EXCEL AUTO SCROLL
-;===============================
 
 try
 {
@@ -275,18 +259,10 @@ catch
 {
 }
 
-
-;===============================
-; PASS / FAIL COUNT
-;===============================
-
 if (barcodePass && mpnPass)
     success++
 else
     failed++
-;===============================
-; AUTO SAVE
-;===============================
 
 if (Mod(count,10)=0)
 {
@@ -298,9 +274,6 @@ if (Mod(count,10)=0)
 }
 
 }
-;==========================================
-; FINAL SAVE
-;==========================================
 
 try
 {
@@ -310,10 +283,6 @@ catch
 {
 }
 
-;==========================================
-; AUTO FIT
-;==========================================
-
 try
 {
     xl.ScreenUpdating := True
@@ -321,7 +290,7 @@ try
     sht := xl.ActiveSheet
 
     sht.Columns("C").EntireColumn.AutoFit
-    sht.Columns("D").EntireColumn.AutoFit
+    sht.Columns("D").ColumnWidth := 35
     sht.Columns("E").EntireColumn.AutoFit
 
     sht.Rows.EntireRow.AutoFit
@@ -331,9 +300,6 @@ try
 catch
 {
 }
-;==========================================
-; SHEET RENAME
-;==========================================
 
 FormatTime, d,, dd-MMM-yyyy HH-mm-ss
 
@@ -353,15 +319,8 @@ catch e
     xl.ScreenUpdating := True
     MsgBox, 48, Rename Error, % e.Message
 }
-;==========================================
-; REMOVE TOOLTIP
-;==========================================
 
 ToolTip
-
-;==========================================
-; TOTAL TIME
-;==========================================
 
 elapsed := A_TickCount-startTime
 
@@ -372,10 +331,6 @@ mm := Floor(Mod(totalSec,3600)/60)
 ss := Mod(totalSec,60)
 
 timeTaken := Format("{:02}:{:02}:{:02}",hh,mm,ss)
-
-;==========================================
-; FINAL SUMMARY
-;==========================================
 
 MsgBox,64,@Adesh,
 (
@@ -410,6 +365,8 @@ Return
 
 Esc::
 ExitApp
+
+
 
 
 </pre>
