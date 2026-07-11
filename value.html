@@ -1,0 +1,94 @@
+#NoEnv
+#SingleInstance Force
+SendMode Input
+SetTitleMatchMode, 2
+SetKeyDelay, 30, 30
+
+F9::
+
+xl := ComObjActive("Excel.Application")
+sel := xl.Selection
+
+startRow := sel.Row
+totalRows := sel.Rows.Count
+
+Loop % totalRows
+{
+    row := startRow + A_Index - 1
+
+    AData := Trim(xl.ActiveSheet.Cells(row,1).Text)
+    BData := Trim(xl.ActiveSheet.Cells(row,2).Text)
+    CData := Trim(xl.ActiveSheet.Cells(row,3).Text)
+
+    ; A
+    SendInput {Raw}%AData%
+    Sleep 200
+    SendInput {Enter}
+    Sleep 300
+
+    ; B
+    SendInput {Raw}%BData%
+    Sleep 200
+    SendInput {Enter}
+    Sleep 300
+
+    ; TAB x4
+    SendInput {Tab 4}
+    Sleep 300
+
+    ; UP x10
+    Loop 10
+    {
+        SendInput {Up}
+        Sleep 30
+    }
+
+    ; LEFT x1
+    SendInput {Left}
+    Sleep 200
+
+    ; 1
+    SendInput 1
+    Sleep 100
+    SendInput {Enter}
+    Sleep 300
+
+    ; OK + Enter Enter
+    SendInput OK
+    Sleep 100
+    SendInput {Enter 2}
+    Sleep 300
+
+    ; OK + Enter
+    Loop 3
+    {
+        SendInput OK
+        Sleep 100
+        SendInput {Enter}
+        Sleep 300
+     }
+        SendInput {Enter 3}
+
+    ; C
+    SendInput {Raw}%CData%
+    Sleep 100
+    SendInput {Enter} 
+    Sleep 2000
+
+    ; Last OK
+    SendInput OK
+    Sleep 100
+
+    ; TAB x3
+    SendInput {Tab 3}
+    Sleep 100
+
+    ; Final Enter
+    SendInput {Enter}
+    Sleep 500
+}
+
+MsgBox, Process Completed.
+return
+
+Esc::ExitApp
