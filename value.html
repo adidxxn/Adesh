@@ -1,3 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>@Adesh</title>
+
+<style>
+body{
+    background:#1e1e1e;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+button{
+    background:#28a745;
+    color:#fff;
+    border:none;
+    padding:12px 20px;
+    cursor:pointer;
+    border-radius:5px;
+    font-size:16px;
+}
+
+#code{
+    display:none;
+}
+</style>
+</head>
+<body>
+
+<button onclick="copyCode()">📋 Copy Code</button>
+
+<pre id="code">
+    
+    
+    
 #NoEnv
 #SingleInstance Force
 SendMode Input
@@ -92,3 +130,17 @@ MsgBox, Process Completed.
 return
 
 Esc::ExitApp
+
+</pre>
+
+<script>
+function copyCode() {
+    const text = document.getElementById("code").textContent;
+
+    navigator.clipboard.writeText(text)
+        .then(() => alert("Code Copied Successfully!"));
+}
+</script>
+
+</body>
+</html>
